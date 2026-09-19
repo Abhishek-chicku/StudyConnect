@@ -9,16 +9,16 @@ import {
 const DoubtContext = createContext(null);
 
 const API_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+  `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api`;
 
 export function DoubtProvider({ children }) {
   const [doubts, setDoubts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const token = localStorage.getItem("token");
-
   const fetchDoubts = useCallback(async () => {
+    const token = localStorage.getItem("token");
+
     if (!token) {
       setDoubts([]);
       return;
@@ -28,15 +28,12 @@ export function DoubtProvider({ children }) {
       setLoading(true);
       setError("");
 
-      const response = await fetch(
-        `${API_URL}/doubts`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${API_URL}/doubts`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       const data = await response.json();
 
@@ -46,9 +43,7 @@ export function DoubtProvider({ children }) {
         );
       }
 
-      setDoubts(
-        Array.isArray(data) ? data : []
-      );
+      setDoubts(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Fetch doubts error:", err);
 
@@ -58,29 +53,26 @@ export function DoubtProvider({ children }) {
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, []);
 
   useEffect(() => {
     fetchDoubts();
   }, [fetchDoubts]);
 
   const addDoubt = async (newDoubt) => {
+    const token = localStorage.getItem("token");
+
     try {
       setError("");
 
-      const response = await fetch(
-        `${API_URL}/doubts`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token
-              ? `Bearer ${token}`
-              : "",
-          },
-          body: JSON.stringify(newDoubt),
-        }
-      );
+      const response = await fetch(`${API_URL}/doubts`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(newDoubt),
+      });
 
       const data = await response.json();
 
