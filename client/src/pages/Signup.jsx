@@ -6,12 +6,18 @@ function Signup({ onSignup, onBackToLogin }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [subject, setSubject] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (role === "tutor" && !subject) {
+      setError("Tutor subject is required");
+      return;
+    }
 
     setLoading(true);
     setError("");
@@ -22,6 +28,9 @@ function Signup({ onSignup, onBackToLogin }) {
         email: email.trim(),
         password,
         role,
+        ...(role === "tutor" && {
+          subject,
+        }),
       });
 
       if (data.token) {
@@ -39,6 +48,7 @@ function Signup({ onSignup, onBackToLogin }) {
           name: data.user.name,
           email: data.user.email,
           role: data.user.role,
+          subject: data.user.subject || subject,
           tokens:
             data.user.tokens ??
             (data.user.role === "student" ? 100 : 0),
@@ -50,6 +60,15 @@ function Signup({ onSignup, onBackToLogin }) {
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  const changeRole = (newRole) => {
+    setRole(newRole);
+    setError("");
+
+    if (newRole === "student") {
+      setSubject("");
     }
   };
 
@@ -164,6 +183,7 @@ function Signup({ onSignup, onBackToLogin }) {
 
           <div className="auth-mobile-logo">
             <div className="auth-logo-icon">🎓</div>
+
             <div>
               <h2>StudyConnect</h2>
               <span>Learn. Connect. Grow.</span>
@@ -172,14 +192,16 @@ function Signup({ onSignup, onBackToLogin }) {
 
           <div className="auth-form-heading">
             <h2>Create Your Account ✨</h2>
-            <p>Start your learning journey with StudyConnect.</p>
+            <p>
+              Start your learning journey with StudyConnect.
+            </p>
           </div>
 
           <div className="auth-role-switch">
             <button
               type="button"
               className={role === "student" ? "active" : ""}
-              onClick={() => setRole("student")}
+              onClick={() => changeRole("student")}
               disabled={loading}
             >
               👨‍🎓 Student
@@ -188,7 +210,7 @@ function Signup({ onSignup, onBackToLogin }) {
             <button
               type="button"
               className={role === "tutor" ? "active" : ""}
-              onClick={() => setRole("tutor")}
+              onClick={() => changeRole("tutor")}
               disabled={loading}
             >
               👨‍🏫 Tutor
@@ -206,6 +228,7 @@ function Signup({ onSignup, onBackToLogin }) {
 
             <div className="auth-input-box">
               <span>👤</span>
+
               <input
                 type="text"
                 placeholder="Enter your name"
@@ -222,6 +245,7 @@ function Signup({ onSignup, onBackToLogin }) {
 
             <div className="auth-input-box">
               <span>✉</span>
+
               <input
                 type="email"
                 placeholder="Enter your email"
@@ -233,11 +257,57 @@ function Signup({ onSignup, onBackToLogin }) {
             </div>
           </div>
 
+          {role === "tutor" && (
+            <div className="auth-input-group">
+              <label>Subject</label>
+
+              <div className="auth-input-box">
+                <span>📚</span>
+
+                <select
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                  required
+                  disabled={loading}
+                >
+                  <option value="">
+                    Select your subject
+                  </option>
+
+                  <option value="Mathematics">
+                    Mathematics
+                  </option>
+
+                  <option value="Physics">
+                    Physics
+                  </option>
+
+                  <option value="Chemistry">
+                    Chemistry
+                  </option>
+
+                  <option value="Biology">
+                    Biology
+                  </option>
+
+                  <option value="Computer Science">
+                    Computer Science
+                  </option>
+
+                  <option value="English">
+                    English
+                  </option>
+                </select>
+              </div>
+            </div>
+          )}
+
           <div className="auth-input-group">
             <label>Password</label>
 
             <div className="auth-input-box">
               <span>🔒</span>
+
               <input
                 type="password"
                 placeholder="Create a password"
@@ -254,7 +324,9 @@ function Signup({ onSignup, onBackToLogin }) {
             type="submit"
             disabled={loading}
           >
-            {loading ? "Creating Account..." : "Create Account →"}
+            {loading
+              ? "Creating Account..."
+              : "Create Account →"}
           </button>
 
           <div className="auth-divider">
@@ -263,6 +335,7 @@ function Signup({ onSignup, onBackToLogin }) {
 
           <p className="auth-switch-text">
             Already have an account?{" "}
+
             <button
               type="button"
               onClick={onBackToLogin}
@@ -271,6 +344,7 @@ function Signup({ onSignup, onBackToLogin }) {
               Login
             </button>
           </p>
+
         </form>
       </div>
     </div>
