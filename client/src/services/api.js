@@ -46,10 +46,13 @@ export async function loginUser(userData) {
 // =========================
 
 export async function createDoubt(doubtData) {
+  const token = localStorage.getItem("token");
+
   const response = await fetch(`${API_URL}/doubts`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(doubtData),
   });
@@ -64,8 +67,15 @@ export async function createDoubt(doubtData) {
 }
 
 export async function getStudentDoubts(studentId) {
+  const token = localStorage.getItem("token");
+
   const response = await fetch(
-    `${API_URL}/doubts/student/${studentId}`
+    `${API_URL}/doubts/student/${studentId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
   );
 
   const data = await response.json();
@@ -78,7 +88,13 @@ export async function getStudentDoubts(studentId) {
 }
 
 export async function getAllDoubts() {
-  const response = await fetch(`${API_URL}/doubts`);
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(`${API_URL}/doubts`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   const data = await response.json();
 
