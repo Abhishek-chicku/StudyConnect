@@ -13,12 +13,7 @@ connectDB();
 
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "http://localhost:3000",
-      "https://client-kappa-two-87.vercel.app",
-      "https://client-dvjqc0vxz-abhishek-singhs-projects-37044235.vercel.app",
-    ],
+    origin: true,
     credentials: true,
   })
 );
