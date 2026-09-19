@@ -1,4 +1,5 @@
-const API_URL = "http://localhost:5000/api";
+const API_URL =
+  `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api`;
 
 // =========================
 // Auth APIs
@@ -63,7 +64,9 @@ export async function createDoubt(doubtData) {
 }
 
 export async function getStudentDoubts(studentId) {
-  const response = await fetch(`${API_URL}/doubts/student/${studentId}`);
+  const response = await fetch(
+    `${API_URL}/doubts/student/${studentId}`
+  );
 
   const data = await response.json();
 
