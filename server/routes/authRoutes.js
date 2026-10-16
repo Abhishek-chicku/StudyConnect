@@ -6,7 +6,6 @@ const User = require("../models/User");
 
 const router = express.Router();
 
-// Generate JWT token
 const generateToken = (user) => {
   if (!process.env.JWT_SECRET) {
     throw new Error("JWT_SECRET is missing in .env file");
@@ -24,7 +23,6 @@ const generateToken = (user) => {
   );
 };
 
-// Format user response
 const formatUser = (user) => {
   return {
     id: user._id,
@@ -48,7 +46,7 @@ router.post("/signup", async (req, res) => {
     const selectedRole = role?.trim().toLowerCase();
     const normalizedSubject = subject?.trim();
 
-    // Required fields
+
     if (!normalizedName || !normalizedEmail || !password) {
       return res.status(400).json({
         success: false,
@@ -56,7 +54,7 @@ router.post("/signup", async (req, res) => {
       });
     }
 
-    // Email validation
+    // Email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailRegex.test(normalizedEmail)) {
@@ -82,7 +80,7 @@ router.post("/signup", async (req, res) => {
       });
     }
 
-    // Tutor subject validation
+    // Tutor sub validation
     if (selectedRole === "tutor" && !normalizedSubject) {
       return res.status(400).json({
         success: false,
