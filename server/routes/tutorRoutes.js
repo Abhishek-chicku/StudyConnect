@@ -405,8 +405,6 @@ router.patch("/profile", authMiddleware, async (req, res) => {
         "Wednesday",
         "Thursday",
         "Friday",
-        "Saturday",
-        "Sunday",
       ];
 
       const timePattern = /^([01]\d|2[0-3]):[0-5]\d$/;

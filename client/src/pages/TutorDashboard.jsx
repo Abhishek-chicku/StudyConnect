@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 
 const API_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+  `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api`;
 
 function TutorDashboard({ user, onProfile, onLogout }) {
   const [requests, setRequests] = useState([]);
@@ -12,24 +12,21 @@ function TutorDashboard({ user, onProfile, onLogout }) {
   const [notification, setNotification] = useState(null);
 
   const tutorId = user?._id || user?.id;
-  const token = localStorage.getItem("token");
 
   const fetchDoubts = async (showLoading = false) => {
+    const token = localStorage.getItem("token");
+
     try {
       if (showLoading) {
         setLoading(true);
       }
 
-      const response = await fetch(
-        `${API_URL}/doubts`,
-        {
-          headers: {
-            Authorization: token
-              ? `Bearer ${token}`
-              : "",
-          },
-        }
-      );
+      const response = await fetch(`${API_URL}/doubts`, {
+        method: "GET",
+        headers: {
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+      });
 
       const data = await response.json();
 
@@ -39,23 +36,17 @@ function TutorDashboard({ user, onProfile, onLogout }) {
         );
       }
 
-      const doubts = Array.isArray(data)
-        ? data
-        : [];
+      const doubts = Array.isArray(data) ? data : [];
 
       setRequests(doubts);
       setError("");
 
       const newDoubt = doubts.find((doubt) => {
-        if (
-          doubt.status?.toLowerCase() !==
-          "pending"
-        ) {
+        if (doubt.status?.toLowerCase() !== "pending") {
           return false;
         }
 
-        const key =
-          `tutor-doubt-${doubt._id}`;
+        const key = `tutor-doubt-${doubt._id}`;
 
         return !localStorage.getItem(key);
       });
@@ -73,15 +64,11 @@ function TutorDashboard({ user, onProfile, onLogout }) {
         );
       }
     } catch (err) {
-      console.error(
-        "Fetch doubts error:",
-        err
-      );
+      console.error("Fetch doubts error:", err);
 
       if (showLoading) {
         setError(
-          err.message ||
-            "Unable to load requests"
+          err.message || "Unable to load requests"
         );
       }
     } finally {
@@ -94,9 +81,7 @@ function TutorDashboard({ user, onProfile, onLogout }) {
   useEffect(() => {
     if (!tutorId) {
       setLoading(false);
-      setError(
-        "Tutor information not found."
-      );
+      setError("Tutor information not found.");
       return;
     }
 
@@ -113,8 +98,7 @@ function TutorDashboard({ user, onProfile, onLogout }) {
 
   const pendingRequests = requests.filter(
     (request) =>
-      request.status?.toLowerCase() ===
-      "pending"
+      request.status?.toLowerCase() === "pending"
   );
 
   const completedSessions = requests.filter(
@@ -131,8 +115,7 @@ function TutorDashboard({ user, onProfile, onLogout }) {
 
   const acceptedRequests = requests.filter(
     (request) =>
-      request.status?.toLowerCase() ===
-      "accepted"
+      request.status?.toLowerCase() === "accepted"
   );
 
   const getStatusClass = (status = "") => {
@@ -143,14 +126,14 @@ function TutorDashboard({ user, onProfile, onLogout }) {
 
   const acceptRequest = async (doubtId) => {
     if (!tutorId) {
-      alert(
-        "Tutor ID not found. Please login again."
-      );
+      alert("Tutor ID not found. Please login again.");
       return;
     }
 
     try {
       setActionLoading(doubtId);
+
+      const token = localStorage.getItem("token");
 
       const response = await fetch(
         `${API_URL}/doubts/${doubtId}/accept`,
@@ -162,9 +145,6 @@ function TutorDashboard({ user, onProfile, onLogout }) {
               ? `Bearer ${token}`
               : "",
           },
-          body: JSON.stringify({
-            tutorId,
-          }),
         }
       );
 
@@ -172,8 +152,7 @@ function TutorDashboard({ user, onProfile, onLogout }) {
 
       if (!response.ok) {
         throw new Error(
-          data.message ||
-            "Failed to accept request"
+          data.message || "Failed to accept request"
         );
       }
 
@@ -199,14 +178,9 @@ function TutorDashboard({ user, onProfile, onLogout }) {
 
       setNotification(null);
 
-      alert(
-        "Request accepted successfully!"
-      );
+      alert("Request accepted successfully!");
     } catch (err) {
-      console.error(
-        "Accept request error:",
-        err
-      );
+      console.error("Accept request error:", err);
 
       alert(
         err.message ||
@@ -219,9 +193,7 @@ function TutorDashboard({ user, onProfile, onLogout }) {
 
   const rejectRequest = async (doubtId) => {
     if (!tutorId) {
-      alert(
-        "Tutor ID not found. Please login again."
-      );
+      alert("Tutor ID not found. Please login again.");
       return;
     }
 
@@ -236,6 +208,8 @@ function TutorDashboard({ user, onProfile, onLogout }) {
     try {
       setActionLoading(doubtId);
 
+      const token = localStorage.getItem("token");
+
       const response = await fetch(
         `${API_URL}/doubts/${doubtId}/reject`,
         {
@@ -246,9 +220,6 @@ function TutorDashboard({ user, onProfile, onLogout }) {
               ? `Bearer ${token}`
               : "",
           },
-          body: JSON.stringify({
-            tutorId,
-          }),
         }
       );
 
@@ -256,8 +227,7 @@ function TutorDashboard({ user, onProfile, onLogout }) {
 
       if (!response.ok) {
         throw new Error(
-          data.message ||
-            "Failed to reject request"
+          data.message || "Failed to reject request"
         );
       }
 
@@ -276,14 +246,9 @@ function TutorDashboard({ user, onProfile, onLogout }) {
 
       setNotification(null);
 
-      alert(
-        "Request rejected successfully!"
-      );
+      alert("Request rejected successfully!");
     } catch (err) {
-      console.error(
-        "Reject request error:",
-        err
-      );
+      console.error("Reject request error:", err);
 
       alert(
         err.message ||
@@ -300,9 +265,7 @@ function TutorDashboard({ user, onProfile, onLogout }) {
       `studyconnect-${request._id}`;
 
     const meetingUrl =
-      `https://meet.jit.si/${encodeURIComponent(
-        roomId
-      )}`;
+      `https://meet.jit.si/${encodeURIComponent(roomId)}`;
 
     window.open(
       meetingUrl,
@@ -352,9 +315,7 @@ function TutorDashboard({ user, onProfile, onLogout }) {
                 setNotification(null);
 
                 document
-                  .getElementById(
-                    "incoming-requests"
-                  )
+                  .getElementById("incoming-requests")
                   ?.scrollIntoView({
                     behavior: "smooth",
                     block: "start",
@@ -458,9 +419,7 @@ function TutorDashboard({ user, onProfile, onLogout }) {
             className="request-btn"
             onClick={() =>
               document
-                .getElementById(
-                  "incoming-requests"
-                )
+                .getElementById("incoming-requests")
                 ?.scrollIntoView({
                   behavior: "smooth",
                   block: "start",
@@ -628,15 +587,12 @@ function TutorDashboard({ user, onProfile, onLogout }) {
 
                     <div className="request-actions">
 
-                      {currentStatus ===
-                        "pending" && (
+                      {currentStatus === "pending" && (
                         <>
                           <button
                             type="button"
                             className="accept-btn"
-                            disabled={
-                              isActionLoading
-                            }
+                            disabled={isActionLoading}
                             onClick={() =>
                               acceptRequest(
                                 request._id
@@ -651,9 +607,7 @@ function TutorDashboard({ user, onProfile, onLogout }) {
                           <button
                             type="button"
                             className="reject-btn"
-                            disabled={
-                              isActionLoading
-                            }
+                            disabled={isActionLoading}
                             onClick={() =>
                               rejectRequest(
                                 request._id
@@ -665,37 +619,31 @@ function TutorDashboard({ user, onProfile, onLogout }) {
                         </>
                       )}
 
-                      {currentStatus ===
-                        "accepted" && (
+                      {currentStatus === "accepted" && (
                         <button
                           type="button"
                           className="video-call-btn"
                           onClick={() =>
-                            joinVideoCall(
-                              request
-                            )
+                            joinVideoCall(request)
                           }
                         >
                           🎥 Join Video Call
                         </button>
                       )}
 
-                      {currentStatus ===
-                        "solved" && (
+                      {currentStatus === "solved" && (
                         <span className="solved-label">
                           ✓ Session Completed
                         </span>
                       )}
 
-                      {currentStatus ===
-                        "completed" && (
+                      {currentStatus === "completed" && (
                         <span className="solved-label">
                           ✓ Session Completed
                         </span>
                       )}
 
-                      {currentStatus ===
-                        "rejected" && (
+                      {currentStatus === "rejected" && (
                         <span className="solved-label">
                           Request Rejected
                         </span>
