@@ -10,6 +10,7 @@ function StudentDashboard({
   onAskDoubt,
   onProfile,
   onMyDoubts,
+  onFindTutors,
 }) {
   const availableTokens =
     user?.availableTokens ?? user?.tokens ?? 100;
@@ -183,11 +184,12 @@ function StudentDashboard({
   return (
     <div className="dashboard-page">
 
-      <Navbar
-        user={user}
-        onProfile={onProfile}
-        onLogout={onLogout}
-      />
+    <Navbar
+  user={user}
+  onProfile={onProfile}
+  onLogout={onLogout}
+  onFindTutors={onFindTutors}
+/>
 
       {notification && (
         <div className="student-notification">

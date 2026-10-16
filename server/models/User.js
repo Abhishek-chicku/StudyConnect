@@ -6,6 +6,8 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+      minlength: 2,
+      maxlength: 50,
     },
 
     email: {
@@ -31,6 +33,67 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
       trim: true,
+    },
+
+    qualification: {
+      type: String,
+      default: "",
+      trim: true,
+      maxlength: 100,
+    },
+
+    experience: {
+      type: String,
+      default: "",
+      trim: true,
+      maxlength: 50,
+    },
+
+    subjects: {
+      type: [String],
+      default: [],
+    },
+
+    bio: {
+      type: String,
+      default: "",
+      trim: true,
+      maxlength: 500,
+    },
+
+    isAvailable: {
+      type: Boolean,
+      default: true,
+    },
+
+    availabilitySlots: {
+      type: [
+        {
+          day: {
+            type: String,
+            enum: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+            required: true,
+          },
+
+          startTime: {
+            type: String,
+            required: true,
+            trim: true,
+          },
+
+          endTime: {
+            type: String,
+            required: true,
+            trim: true,
+          },
+        },
+      ],
+      default: [],
+    },
+
+    isVerified: {
+      type: Boolean,
+      default: false,
     },
 
     availableTokens: {

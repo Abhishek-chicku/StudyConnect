@@ -1,9 +1,5 @@
 const API_URL = "http://localhost:5000/api";
 
-// =========================
-// Auth APIs
-// =========================
-
 export async function signupUser(userData) {
   const response = await fetch(`${API_URL}/auth/signup`, {
     method: "POST",
@@ -39,10 +35,6 @@ export async function loginUser(userData) {
 
   return data;
 }
-
-// =========================
-// Doubt APIs
-// =========================
 
 export async function createDoubt(doubtData) {
   const response = await fetch(`${API_URL}/doubts`, {
